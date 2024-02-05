@@ -1,12 +1,13 @@
 const express = require("express");
 const path = require("path");
+const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-
+const router = require("./routes/router");
 
 const app = express();
 
@@ -18,11 +19,13 @@ async function main() {
   await mongoose.connect(mongoDB);
   console.log("Connected to MongoDB!");
 }
-app.set("views", __dirname);
+app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
-app.get("/", (req, res) =>
-  res.send("Home page")
-);
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+app.use("/", router);
 
 app.listen(3000, () => console.log("App listening on port 3000"));
