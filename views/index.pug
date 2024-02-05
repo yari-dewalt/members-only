@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  .messages
+    h1 Messages
+    each message in messages
+      .message
+        h2=message.user.name
+        h3=message.formatted_time
+        p=message.text
