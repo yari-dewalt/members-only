@@ -9,8 +9,8 @@ const MessageSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: "User", required: true }
 }, { collection: "messages" });
 
-MessageSchema.virtual("formatted_time").get(function() {
-  return DateTime.fromJSDate(this.timestamp).toLocaleString({ hour: "numeric", minute: "2-digit" });
+MessageSchema.virtual("formatted_date_and_time").get(function() {
+  return DateTime.fromJSDate(this.timestamp).toLocaleString({ month: "numeric", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
 });
 
 module.exports = mongoose.model("Message", MessageSchema);
