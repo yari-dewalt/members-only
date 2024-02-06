@@ -7,7 +7,7 @@ const { body, validationResult } = require("express-validator");
 exports.index = asyncHandler(async (req, res, next) => {
   const allMessages = await Message.find().sort({ date: 1 }).populate("user").exec();
   res.render("index", {
-    messages: allMessages
+    messages: allMessages,
   });
 });
 
@@ -24,8 +24,7 @@ exports.message_create_post = [
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
 
-    const testUser = await User.findOne({ name: "Test User" });
-    const message = new Message({ text: req.body.text, timestamp: new Date(), user: testUser });
+    const message = new Message({ text: req.body.text, timestamp: new Date(), user: res.locals.currentUser });
 
     if (!errors.isEmpty()) {
       res.render("message_form", {
@@ -35,8 +34,8 @@ exports.message_create_post = [
       });
     } else {
       await message.save();
-      testUser.messages.push(message);
-      await testUser.save();
+      res.locals.currentUser.messages.push(message);
+      await res.locals.currentUser.save();
       res.redirect("/");
     }
   })
