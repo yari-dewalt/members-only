@@ -1,6 +1,16 @@
 extends layout
 
 block content
+  if (currentUser)
+    h1=currentUser.name
+    if (!currentUser.member)
+      h2 Not a member
+      form(action="/make-member" method="POST")
+        label(for="code") Code
+        input(name="code" placeholder="Insert secret code" type="text")
+        button(type="submit") Submit
+    if (currentUser.member)
+      h2 Member
   .messages
     h1 Messages
     each message in messages
