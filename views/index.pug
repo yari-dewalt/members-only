@@ -1,20 +1,59 @@
 extends layout
 
 block content
-  if (currentUser)
-    h1=currentUser.name
-    if (!currentUser.member)
-      h2 Not a member
-      form(action="/make-member" method="POST")
-        label(for="code") Code
-        input(name="code" placeholder="Insert secret code" type="text")
-        button(type="submit") Submit
-    if (currentUser.member)
-      h2 Member
-  .messages
-    h1 Messages
-    each message in messages
-      .message
-        h2=message.user.name
-        h3=message.formatted_date_and_time
-        p=message.text
+  .content
+    .welcome
+      h1#welcome-text Members Only Messaging
+      if (!currentUser)
+        div
+          a#login.link-button(href="/login") Log-in
+          div
+            p Don't have an account? Click below to sign up!
+            a#signup.link-button(href="/signup") Sign-up
+      if (currentUser)
+        div
+          h2 Welcome, #{currentUser.name}!
+          if (currentUser.member)
+            p Current Status: Member
+          else
+            p Current Status: Not a member
+            form#code(action="/make-member" method="POST")
+              input(name="code" placeholder="Enter secret code" type="text")
+              button(type="submit") Submit
+        a#logout.link-button(href="/logout") Log-out
+    .messages-container
+      .messages
+        each message in messages.reverse()
+          if (!currentUser)
+            .message.anonymous
+              .message-header
+                h2 Anonymous
+              p=message.text
+          else if (currentUser)
+            if (!currentUser.member)
+              if (message.user.username === currentUser.username)
+                .message.self
+                  .message-header
+                    h2=message.user.name
+                    h3=message.formatted_date_and_time
+                  p=message.text
+              else
+                .message.anonymous
+                  h2 Anonymous
+                  p=message.text
+            else if (currentUser.member)
+              if (message.user.username === currentUser.username)
+                .message.self
+                  .message-header
+                    h2=message.user.name
+                    h3=message.formatted_date_and_time
+                  p=message.text
+              else
+                .message
+                  .message-header
+                    h2=message.user.name
+                    h3=message.formatted_date_and_time
+                  p=message.text
+      if (currentUser)
+        .new-message-area
+          a#createmessage.link-button(href="/newmessage") Create message
